@@ -2,7 +2,9 @@
 
 # The DAWN of World-Action Interactive Models
 
-**Hongbo Lu**<sup>1,2,*</sup>, **Liang Yao**<sup>1,*</sup>, **Chenghao He**<sup>1,*</sup>, **Haoyu Wang**<sup>1,*</sup>, **Xiang Gu**<sup>3</sup>, **Xianfei Li**<sup>1,2</sup>, **Wenlong Liao**<sup>1,&dagger;</sup>, **Tao He**<sup>1</sup>, **Pai Peng**<sup>1,&dagger;,&Dagger;</sup>
+**Hongbo Lu**<sup>1,2,\*</sup>, **Liang Yao**<sup>1,\*</sup>, **Chenghao He**<sup>1,\*</sup>, **Haoyu Wang**<sup>1,\*</sup>, 
+
+**Xiang Gu**<sup>3</sup>, **Xianfei Li**<sup>1,2</sup>, **Wenlong Liao**<sup>1,&dagger;</sup>, **Tao He**<sup>1</sup>, **Pai Peng**<sup>1,&dagger;,&Dagger;</sup>
 
 <sup>1</sup>COWARobot Co. Ltd &nbsp;&nbsp; <sup>2</sup>Shanghai Jiao Tong University &nbsp;&nbsp; <sup>3</sup>Hohai University
 
