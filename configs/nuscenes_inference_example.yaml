@@ -1,0 +1,167 @@
+# nuScenes world model training config: Stage 3 - WTA Planner head training
+# ViT-Large encoder with V-JEPA 2 pretrained weights
+#
+# Usage:
+#   python -m app.main \
+#     --fname configs/train/nuscenes/vitl16/planner_wta_nuscenes_vjepa2_init.yaml \
+#     --train-script train_navsim_v2
+#
+# Stage 3: Train WTA planner head with frozen encoder + predictor.
+#   - Resumes encoder + predictor from Stage 1 checkpoint (or Stage 2 if available).
+#   - Encoder and predictor both frozen.
+#   - MultiModalTemporalPlanner trained from scratch with WTA loss v3 (aWTA).
+#   - 6 trajectory modes, status features enabled.
+#
+# nuScenes at 2 Hz, 12 frames total (4 observed + 8 predicted = 4s horizon).
+# Evaluation: L2 displacement error (ADE/FDE) + collision rate (point + box).
+# Data: nuScenes converted to NavSim PKL format via scripts/convert_nuscenes_to_navsim_pkl.py
+
+app: vjepa_cowa_world_model
+cpus_per_task: 12
+folder: outputs/nuscenes_eval
+mem_per_gpu: 81G
+nodes: 1
+tasks_per_node: 8
+
+data:
+  batch_size: 4
+  crop_size: 256
+  dataset_fpcs:
+    - 10
+  fps: 2
+  num_workers: 8
+  patch_size: 16
+  num_target_frames: 10
+  pin_mem: true
+  tubelet_size: 2
+  persistent_workers: true
+  use_tubelet_repeat: true
+  navsim:
+    enabled: true
+    data_path: /path/to/navsim_format/train
+    sensor_blobs_path: /path/to/navsim_format/sensor_blobs
+    camera_name: CAM_F0
+    max_scenes: null
+    val_data_path: /path/to/navsim_format/val
+    val_sensor_blobs_path: /path/to/navsim_format/sensor_blobs
+    max_val_scenes: null
+    index_cache: true
+    window_stride: 6
+    max_frame_gap: 1
+
+data_aug:
+  auto_augment: false
+  horizontal_flip: false
+  motion_shift: false
+  random_resize_aspect_ratio:
+    - 0.75
+    - 1.35
+  random_resize_scale:
+    - 1.777
+    - 1.777
+  reprob: 0.0
+
+loss:
+  auto_steps: 16
+  loss_exp: 1.0
+  normalize_reps: true
+
+meta:
+  dtype: bfloat16
+  val_freq: 5
+  # 从 Stage 1 的 checkpoint 恢复 encoder + predictor 权重
+  # (如果已完成 Stage 2，可改为 Stage 2 的 checkpoint 路径)
+  resume_checkpoint: /path/to/checkpoints/latest.pt
+  load_predictor: true
+  load_encoder: true
+  load_seg: false
+  load_planner: false
+  pretrain_checkpoint: null
+  pretrain_checkpoint_full: /path/to/vjepa/vitl_merge_3dataset_e50.pt
+  pretrain_repo: null
+  resume_model_only: true
+  context_encoder_key: target_encoder
+  target_encoder_key: target_encoder
+  save_every_freq: 10
+  seed: 239
+  use_sdpa: true
+
+model:
+  model_name: vit_large
+  pred_depth: 12
+  pred_embed_dim: 384
+  pred_is_frame_causal: true
+  pred_num_heads: 12
+  uniform_power: true
+  use_activation_checkpointing: true
+  use_extrinsics: false
+  use_rope: true
+
+optimization:
+  anneal: 15
+  epochs: 150
+  final_lr: 0.0
+  final_weight_decay: 0.04
+  enc_lr_scale: 0.001
+  ipe: null
+  lr: 0.0001
+  start_lr: 0.000075
+  warmup: 15
+  weight_decay: 0.04
+
+ema:
+  ema_start: 0.996
+  ema_end: 0.999
+
+segmentation:
+  use_segmentation: false
+  seg_loss_weight: 0.0
+
+train:
+  encoder_train: false    # Stage 3: encoder 冻结
+  seg_head: false
+  encoder_ema: false
+  perceiver_ema: false
+  predictor_train: True  # Stage 3: predictor 冻结
+  action_dim: 3
+  use_states_for_predictor: false
+  predictor_inference_consistent: true
+  num_observed_frames: 4
+  state_dim: 8  # IC状态维度: driving_command(4) + vx,vy,ax,ay(4)
+  command_dim: 4
+planner:
+  use_planner: true
+  planner_type: diffusion       # 使用扩散模型 planner
+  # Diffusion planner 参数
+  diff_hidden_dim: 256
+  diff_num_layers: 4
+  diff_num_heads: 8
+  diff_dropout: 0.0
+  diff_mlp_ratio: 4.0
+  diff_sde_beta_min: 0.1
+  diff_sde_beta_max: 20.0
+  diff_inference_steps: 20       # DPM-Solver++ 采样步数
+  diff_num_samples: 6           # K 个噪声样本用于多模态
+  diff_traj_dim: 6              # 轨迹维度 (x, y, vx, vy, cos_yaw, sin_yaw)
+  diff_dt: 0.5                  # 帧间时间间隔 (秒)
+  diff_trajectory_token_mode: per_pose_token   # single_token=旧版整轨迹单token；per_pose_token=每个pose一个token
+  diff_use_last_frame_only: false             # true -> 仅用 z_ar 最后一帧做 cross-attn（AR causal 最后帧含全部信息）
+  diff_interleave_predictor_sampling: false  # true -> 推理时 predictor 每 rollout 出一帧 future token，就推进 diffusion 若干 step
+  diff_train_prefix_conditioning: false  # true -> PrefixConditionedDiffusionPlanner, false -> legacy DiffusionPlanner
+  diff_train_min_prefix_frames: 1
+  diff_train_full_prefix_prob: 0.25
+  diff_num_modes: 6           # 内建 K 模态
+  diff_cls_loss_weight: 1.0
+  diff_reg_loss_weight: 1.0
+  diff_vel_loss_weight: 0.5
+  diff_yaw_loss_weight: 0.5
+  diff_conf_temperature: 1.5   # soft-CE target 温度（越大标签越平）
+  diff_cls_th: 2.0             # 样本门：min_dist < cls_th 才参与cls 训练
+  diff_cls_ignore: 0.2
+  awta_init_temperature: 8.0
+  awta_exp_base: 0.984
+  awta_min_temperature: 0.1
+  diff_use_anchor_frame: True
+  split_status_embedding: true
+  planner_loss_weight: 1
+  diff_adaln_version: v2

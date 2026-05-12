@@ -1,0 +1,13 @@
+torch>=2
+torchvision
+numpy
+pyyaml
+opencv-python
+pillow
+scipy
+timm
+einops
+iopath
+tensorboard
+pandas
+peft
