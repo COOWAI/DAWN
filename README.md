@@ -33,9 +33,9 @@ The code expects the converted nuScenes/NavSim PKL paths and model checkpoints r
 Download the required model weights before running inference.
 
 - Pretrained weights (used for `config.meta.pretrain_checkpoint_full`):
-  - `pretrained.pt`: https://pan.baidu.com/s/1SgmdMop50yd-Vv2nl0k2Mg 提取码: ukx8 
+  - `pretrained.pt`: https://pan.baidu.com/s/1SgmdMop50yd-Vv2nl0k2Mg Code: ukx8 
 - Inference checkpoint weights (used for `--checkpoint` or `best_open_loop.pt`):
-  - `best_open_loop.pt`: https://pan.baidu.com/s/1uVHHEGp8qEJR9Gz3XGS05Q 提取码: xhku 
+  - `best_open_loop.pt`: https://pan.baidu.com/s/1uVHHEGp8qEJR9Gz3XGS05Q Code: xhku 
 
 For example:
 
