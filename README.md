@@ -33,13 +33,9 @@ The code expects the converted nuScenes/NavSim PKL paths and model checkpoints r
 Download the required model weights before running inference.
 
 - Pretrained weights (used for `config.meta.pretrain_checkpoint_full`):
-  - `vjepa_pretrain.pt`: 通过网盘分享的文件：vitl_merge_3dataset_e50.pt
-链接: https://pan.baidu.com/s/1SgmdMop50yd-Vv2nl0k2Mg 提取码: ukx8 
---来自百度网盘超级会员v5的分享
+  - `vjepa_pretrain.pt`: https://pan.baidu.com/s/1SgmdMop50yd-Vv2nl0k2Mg 提取码: ukx8 
 - Inference checkpoint weights (used for `--checkpoint` or `best_open_loop.pt`):
-  - `latest.pt`: 通过网盘分享的文件：best_open_loop.pt
-链接: https://pan.baidu.com/s/1uVHHEGp8qEJR9Gz3XGS05Q 提取码: xhku 
---来自百度网盘超级会员v5的分享
+  - `latest.pt`: https://pan.baidu.com/s/1uVHHEGp8qEJR9Gz3XGS05Q 提取码: xhku 
 
 For example:
 
