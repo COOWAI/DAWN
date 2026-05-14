@@ -28,6 +28,29 @@ pip install -e .
 
 The code expects the converted nuScenes/NavSim PKL paths and model checkpoints referenced by the YAML to exist on the machine.
 
+## Model Weights
+
+Download the required model weights before running inference.
+
+- Pretrained weights (used for `config.meta.pretrain_checkpoint_full`):
+  - `vjepa_pretrain.pt`: 通过网盘分享的文件：vitl_merge_3dataset_e50.pt
+链接: https://pan.baidu.com/s/1SgmdMop50yd-Vv2nl0k2Mg 提取码: ukx8 
+--来自百度网盘超级会员v5的分享
+- Inference checkpoint weights (used for `--checkpoint` or `best_open_loop.pt`):
+  - `latest.pt`: 通过网盘分享的文件：best_open_loop.pt
+链接: https://pan.baidu.com/s/1uVHHEGp8qEJR9Gz3XGS05Q 提取码: xhku 
+--来自百度网盘超级会员v5的分享
+
+For example:
+
+```bash
+mkdir -p checkpoints
+wget -O checkpoints/vjepa_pretrain.pt https://example.com/path/to/vjepa_pretrain.pt
+wget -O checkpoints/best_open_loop.pt https://example.com/path/to/best_open_loop.pt
+```
+
+Then update your YAML or command line `--checkpoint` path accordingly.
+
 ## Data Preparation
 
 Convert raw nuScenes data (labels JSON + GT box NPZ + CAN bus) to the NavSim PKL layout used by `NavSimWorldModelDataset`:

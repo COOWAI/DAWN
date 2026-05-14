@@ -1,17 +1,5 @@
 # nuScenes world model training config: Stage 3 - WTA Planner head training
 # ViT-Large encoder with V-JEPA 2 pretrained weights
-#
-# Usage:
-#   python -m app.main \
-#     --fname configs/train/nuscenes/vitl16/planner_wta_nuscenes_vjepa2_init.yaml \
-#     --train-script train_navsim_v2
-#
-# Stage 3: Train WTA planner head with frozen encoder + predictor.
-#   - Resumes encoder + predictor from Stage 1 checkpoint (or Stage 2 if available).
-#   - Encoder and predictor both frozen.
-#   - MultiModalTemporalPlanner trained from scratch with WTA loss v3 (aWTA).
-#   - 6 trajectory modes, status features enabled.
-#
 # nuScenes at 2 Hz, 12 frames total (4 observed + 8 predicted = 4s horizon).
 # Evaluation: L2 displacement error (ADE/FDE) + collision rate (point + box).
 # Data: nuScenes converted to NavSim PKL format via scripts/convert_nuscenes_to_navsim_pkl.py
@@ -77,7 +65,7 @@ meta:
   load_seg: false
   load_planner: false
   pretrain_checkpoint: null
-  pretrain_checkpoint_full: /path/to/vjepa/pretrain.pt
+  pretrain_checkpoint_full: /path/to/checkpoints/pretrain.pt
   pretrain_repo: null
   resume_model_only: true
   context_encoder_key: target_encoder
