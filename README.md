@@ -59,16 +59,6 @@ python tools/convert_nuscenes_to_navsim_pkl.py \
   --workers 8
 ```
 
-**Arguments:**
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--nuscenes-root` | `/path/nuScenes` | nuScenes root containing `labels/`, `samples/`, `can_bus/` |
-| `--output-root` | `/path/nuScenes/navsim_format_fix_2` | Output directory |
-| `--split` | `trainval` | Which split to convert: `train`, `val`, or `trainval` |
-| `--workers` | `8` | Number of parallel workers |
-| `--dry-run` | off | List scenes without converting |
-
 **Input directory layout** (`--nuscenes-root`):
 
 ```
@@ -105,9 +95,9 @@ python tools/convert_nuscenes_to_navsim_pkl.py \
 
 - `ego2global_translation` / `ego2global_rotation` — from nuScenes ego pose matrix
 - `ego_dynamic_state` (`[vx, vy, ax, ay]` in ego frame) — interpolated from CAN bus pose data
-- `driving_command` (one-hot: GO_STRAIGHT / TURN_LEFT / TURN_RIGHT / U_TURN) — inferred from cumulative yaw change over the scene
-- `cams` — only CAM_FRONT is retained; images are symlinked, not copied
-- `anns` (GT boxes) — NPZ annotations converted to NavSim format; categories mapped (vehicle/pedestrian/bicycle); barriers and traffic cones are filtered out
+- `driving_command` (one-hot: `[GO_STRAIGHT / TURN_LEFT / TURN_RIGHT / U_TURN]`) — inferred from cumulative yaw change over the scene
+- `cams` — only `CAM_FRONT` is retained; images are symlinked, not copied
+- `anns` (`GT boxes`) — NPZ annotations converted to NavSim format; categories mapped (`[vehicle/pedestrian/bicycle]`); barriers and traffic cones are filtered out
 
 Scene split follows the standard nuScenes v1.0-trainval partition: 700 train + 150 val scenes.
 
