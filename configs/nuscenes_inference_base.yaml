@@ -65,7 +65,7 @@ meta:
   load_seg: false
   load_planner: false
   pretrain_checkpoint: null
-  pretrain_checkpoint_full: /path/to/checkpoints/pretrain.pt
+  pretrain_checkpoint_full: /path/to/checkpoints/pretrained.pt
   pretrain_repo: null
   resume_model_only: true
   context_encoder_key: target_encoder
