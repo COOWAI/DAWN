@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline nuScenes/NavSim-PKL validation entrypoint for train_navsim_v2 planners."""
+"""Offline nuScenes/NavSim-PKL validation entrypoint for planners."""
 
 from __future__ import annotations
 

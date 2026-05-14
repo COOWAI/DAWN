@@ -28,6 +28,70 @@ pip install -e .
 
 The code expects the converted nuScenes/NavSim PKL paths and model checkpoints referenced by the YAML to exist on the machine.
 
+## Data Preparation
+
+Convert raw nuScenes data (labels JSON + GT box NPZ + CAN bus) to the NavSim PKL layout used by `NavSimWorldModelDataset`:
+
+```bash
+python tools/convert_nuscenes_to_navsim_pkl.py \
+  --nuscenes-root /path/nuScenes \
+  --output-root /path/nuScenes/navsim_format \
+  --split trainval \
+  --workers 8
+```
+
+**Arguments:**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--nuscenes-root` | `/path/nuScenes` | nuScenes root containing `labels/`, `samples/`, `can_bus/` |
+| `--output-root` | `/path/nuScenes/navsim_format_fix_2` | Output directory |
+| `--split` | `trainval` | Which split to convert: `train`, `val`, or `trainval` |
+| `--workers` | `8` | Number of parallel workers |
+| `--dry-run` | off | List scenes without converting |
+
+**Input directory layout** (`--nuscenes-root`):
+
+```
+/path/nuScenes/
+├── labels/
+│   ├── scene-0001.json          # per-scene frame metadata
+│   ├── scene-0001/              # per-scene GT box NPZ files
+│   │   ├── 0001.npz
+│   │   └── ...
+│   └── scene-0002.json
+├── samples/                     # original camera images (symlinked, not copied)
+│   └── CAM_FRONT/...
+└── can_bus/
+    └── scene-0001_pose.json     # CAN bus ego pose (velocity, acceleration)
+```
+
+**Output directory layout** (`--output-root`):
+
+```
+/path/nuScenes/navsim_format/
+├── train/
+│   ├── scene-0001.pkl           # List[Dict], each entry = one keyframe (2 Hz)
+│   └── ...
+├── val/
+│   ├── scene-0003.pkl
+│   └── ...
+└── sensor_blobs/
+    └── scene-0001/
+        └── CAM_F0/
+            └── n015-2018-...jpg  # symlinks to original images
+```
+
+**What gets converted per keyframe:**
+
+- `ego2global_translation` / `ego2global_rotation` — from nuScenes ego pose matrix
+- `ego_dynamic_state` (`[vx, vy, ax, ay]` in ego frame) — interpolated from CAN bus pose data
+- `driving_command` (one-hot: GO_STRAIGHT / TURN_LEFT / TURN_RIGHT / U_TURN) — inferred from cumulative yaw change over the scene
+- `cams` — only CAM_FRONT is retained; images are symlinked, not copied
+- `anns` (GT boxes) — NPZ annotations converted to NavSim format; categories mapped (vehicle/pedestrian/bicycle); barriers and traffic cones are filtered out
+
+Scene split follows the standard nuScenes v1.0-trainval partition: 700 train + 150 val scenes.
+
 ## Run
 
 ```bash

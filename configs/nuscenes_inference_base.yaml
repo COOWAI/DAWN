@@ -77,7 +77,7 @@ meta:
   load_seg: false
   load_planner: false
   pretrain_checkpoint: null
-  pretrain_checkpoint_full: /path/to/vjepa/vitl_merge_3dataset_e50.pt
+  pretrain_checkpoint_full: /path/to/vjepa/pretrain.pt
   pretrain_repo: null
   resume_model_only: true
   context_encoder_key: target_encoder
@@ -133,9 +133,9 @@ planner:
   use_planner: true
   planner_type: diffusion       # 使用扩散模型 planner
   # Diffusion planner 参数
-  diff_hidden_dim: 256
-  diff_num_layers: 4
-  diff_num_heads: 8
+  diff_hidden_dim: 384
+  diff_num_layers: 12
+  diff_num_heads: 12
   diff_dropout: 0.0
   diff_mlp_ratio: 4.0
   diff_sde_beta_min: 0.1
@@ -165,3 +165,37 @@ planner:
   split_status_embedding: true
   planner_loss_weight: 1
   diff_adaln_version: v2
+
+# current version does not support proposal training, so we keep the config here for future use and reference
+# proposal:
+#   enabled: true
+#   provider_type: diffusion
+#   freeze: true
+#   num_modes: 6
+#   log_metrics_only: true
+#   use_z_context: false
+#   temporal_alignment: false
+#   use_token_ae: false
+#   runtime_normalize_reps: true
+#   use_separate_encoder: true
+#   encoder_backbone: drive_jepa_img_encoder
+#   encoder_model_name: vit_large
+#   encoder_checkpoint: /path/to/vjepa/pretrain.pt  # Drive-JEPA encoder 权重；为空则回退 proposal.checkpoint
+#   encoder_checkpoint_key: target_encoder
+#   drive_jepa_resolution: [256, 512]
+#   drive_jepa_crop_top_bottom: 28
+#   drive_jepa_num_frames: 2
+#   drive_jepa_use_grid_mask: false
+#   encoder_freeze: true
+#   checkpoint: /path/to/checkpoints/latest.pt  # Proposal provider 权重；如果 encoder_checkpoint 已指定且包含 encoder 权重，则可不指定或指定同一 checkpoint
+
+# stage2:
+#   lambdas:
+#     div: 0.05
+
+# stage3:
+#   num_rounds: 4
+#   round_weights: [0.3, 1.0]
+#   grad_checkpoint: true
+#   predictor_finetune: false
+#   fut_consistency_weight: 0.0

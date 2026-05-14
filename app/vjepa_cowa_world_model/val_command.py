@@ -4,16 +4,6 @@
 """
 轨迹预测评估模块 (for train_command.py)
 与 train_command.py 的 encoder/predictor/planner 调用方式保持一致
-
-相比 val_giant.py 的修复:
-1. prepare_status_feature 支持 use_states_for_planner / action_dim
-2. predictor forward 支持 predictor_inference_consistent 模式
-3. predictor forward 支持 use_states_for_predictor
-
-评估指标:
-- ADE (Average Displacement Error): 所有预测点与GT点的平均L2距离
-- FDE (Final Displacement Error): 最后一个预测点与GT点的L2距离
-- minADE@K / minFDE@K: 多模态轨迹的最小ADE/FDE
 """
 
 import os
